@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mi Azúcar</title>
+<meta name="description" content="Mi Azúcar: registra tu glucosa en segundos, mira tu tendencia, aprende a cuidarte y lleva un reporte claro a tu médico.">
+<meta name="theme-color" content="#2347E6">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mi Azúcar">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2.5c3.6 4.6 6.5 8.3 6.5 12a6.5 6.5 0 0 1-13 0c0-3.7 2.9-7.4 6.5-12Z" fill="currentColor" style="color:var(--accent-ink)"/></svg>
+      </div>
+      <div>
+        <h1>Mi Azúcar</h1>
+        <p id="greet">Tu registro de glucosa</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="pill" id="installBtn" hidden>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Instalar
+      </button>
+      <a href="#ajustes" class="icon-btn gear" aria-label="Ajustes" data-nav="ajustes">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <div class="banner" id="exampleBanner" hidden>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
+    <div><strong>Estás viendo datos de ejemplo.</strong>Se borran solos en cuanto registres tu primera medición.</div>
+  </div>
+
+  <!-- HOY -->
+  <section id="view-hoy" class="stack" aria-label="Hoy">
+    <div class="hero" id="hero"></div>
+    <button class="btn btn-primary" data-open-entry>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      Registrar medición
+    </button>
+    <div class="stats" id="stats"></div>
+    <div class="card" id="tirCard">
+      <div class="card-h"><h2>Tiempo en tu meta · 30 días</h2><span class="muted small" id="tirN"></span></div>
+      <div class="tir" id="tirBar" role="img"></div>
+      <div class="tir-legend" id="tirLegend"></div>
+    </div>
+    <div class="card tip-card" id="tipToday"></div>
+    <div class="card chart">
+      <div class="card-h">
+        <h2 id="chartTitle">Últimos 14 días</h2>
+        <div class="chips sm" id="chartRange" role="group" aria-label="Periodo de la gráfica">
+          <button class="chip" data-days="7" aria-pressed="false">7</button>
+          <button class="chip" data-days="14" aria-pressed="true">14</button>
+          <button class="chip" data-days="30" aria-pressed="false">30</button>
+        </div>
+      </div>
+      <div id="chart"></div>
+      <div class="legend">
+        <span><i class="sw" style="background:var(--band);border:1px solid var(--ok)"></i>Rango meta</span>
+        <span><i class="sw" style="background:var(--ok)"></i>En rango</span>
+        <span><i class="sw" style="background:var(--high)"></i>Alto</span>
+        <span><i class="sw" style="background:var(--low)"></i>Bajo</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Mediciones de hoy</h2>
+      <ul class="list" id="todayList"></ul>
+    </div>
+    <div id="featuredAlly"></div>
+  </section>
+
+  <!-- APRENDE -->
+  <section id="view-aprende" class="stack" aria-label="Aprende" hidden>
+    <div class="card intro">
+      <span class="eyebrow">Aprende en 2 minutos</span>
+      <h2 class="big-h">Lo que conviene saber para cuidar tu azúcar</h2>
+      <p class="muted" style="margin:0">Guías cortas y claras. Toca un tema para abrirlo.</p>
+    </div>
+    <div class="stack" id="learnList"></div>
+  </section>
+
+  <!-- ALIADOS -->
+  <section id="view-aliados" class="stack" aria-label="Negocios aliados" hidden>
+    <div class="card intro">
+      <span class="eyebrow">Negocios aliados</span>
+      <h2 class="big-h">Descuentos y servicios para cuidarte mejor</h2>
+      <p class="muted" style="margin:0">Farmacias, laboratorios, nutrición y más, cerca de ti. Los negocios nunca ven tus mediciones.</p>
+      <div class="chips" id="allyChips" role="group" aria-label="Filtrar por tipo de negocio" style="margin-top:14px"></div>
+    </div>
+    <div class="stack" id="allyList"></div>
+    <div class="card advertise" id="anunciate">
+      <span class="eyebrow light">Para negocios</span>
+      <h2 class="big-h">Anuncia tu negocio en Mi Azúcar</h2>
+      <p style="margin:0">Llega a personas que revisan su salud todos los días y buscan productos y servicios para cuidarse.</p>
+      <div class="plans" id="plans"></div>
+      <p class="small" style="margin:0;opacity:.85">Precios de ejemplo. Se ajustan antes de lanzar.</p>
+    </div>
+    <div class="card stack">
+      <h2 style="margin:0">Solicita información</h2>
+      <form class="stack" id="leadForm" novalidate>
+        <div class="field"><label for="leadBiz">Nombre del negocio</label><input class="input" id="leadBiz" type="text" maxlength="80" autocomplete="organization"></div>
+        <div class="grid2">
+          <div class="field"><label for="leadContact">Teléfono o correo</label><input class="input" id="leadContact" type="text" maxlength="80"></div>
+          <div class="field"><label for="leadPlan">Plan que te interesa</label>
+            <select class="input" id="leadPlan"><option>Básico</option><option selected>Destacado</option><option>Premium</option><option>Aún no sé</option></select></div>
+        </div>
+        <div class="field"><label for="leadMsg">Mensaje (opcional)</label><input class="input" id="leadMsg" type="text" maxlength="200" placeholder="Ej. Somos una farmacia en el centro"></div>
+        <p class="err" id="leadErr" hidden style="text-align:left"></p>
+        <button class="btn btn-primary" type="submit">Preparar solicitud</button>
+        <div id="leadResult" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- HISTORIAL -->
+  <section id="view-historial" class="stack" aria-label="Historial" hidden>
+    <div class="card" id="a1cCard"></div>
+    <div class="card">
+      <h2>Promedio por momento del día</h2>
+      <div class="chips" id="rangeChips" role="group" aria-label="Periodo">
+        <button class="chip" data-range="7" aria-pressed="true">7 días</button>
+        <button class="chip" data-range="30" aria-pressed="false">30 días</button>
+        <button class="chip" data-range="90" aria-pressed="false">90 días</button>
+      </div>
+      <div style="overflow-x:auto;margin-top:12px"><table class="moment-table" id="momentTable"></table></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h2>Todas las mediciones</h2></div>
+      <div class="field" style="margin-bottom:10px">
+        <label for="histFilter" class="sr">Filtrar por momento</label>
+        <select class="input" id="histFilter"></select>
+      </div>
+      <div id="historyList"></div>
+    </div>
+  </section>
+
+  <!-- AJUSTES -->
+  <section id="view-ajustes" class="stack" aria-label="Ajustes" hidden>
+    <div class="card stack">
+      <h2 style="margin:0">Mis datos</h2>
+      <div class="field">
+        <label for="setName">Tu nombre (opcional)</label>
+        <input class="input" id="setName" type="text" autocomplete="given-name" placeholder="Ej. María">
+      </div>
+      <div class="field">
+        <span class="lab" id="unitLab">Unidad de medida</span>
+        <div class="seg" role="group" aria-labelledby="unitLab">
+          <button data-unit="mgdl" aria-pressed="true">mg/dL</button>
+          <button data-unit="mmol" aria-pressed="false">mmol/L</button>
+        </div>
+        <span class="hint">Usa la misma que muestra tu glucómetro.</span>
+      </div>
+      <div class="field">
+        <span class="lab" id="themeLab">Apariencia</span>
+        <div class="seg seg3" role="group" aria-labelledby="themeLab">
+          <button data-theme-set="auto" aria-pressed="true">Automática</button>
+          <button data-theme-set="light" aria-pressed="false">Clara</button>
+          <button data-theme-set="dark" aria-pressed="false">Oscura</button>
+        </div>
+      </div>
+      <div class="switch">
+        <div><div class="lab" style="font-weight:700" id="bigLab">Letra grande</div><div class="hint muted small">Hace todo más fácil de leer.</div></div>
+        <button class="toggle" id="setBig" role="switch" aria-checked="false" aria-labelledby="bigLab"></button>
+      </div>
+    </div>
+    <div class="card stack">
+      <h2 style="margin:0">Mis metas</h2>
+      <p class="muted small" style="margin:0">Vienen con los valores que suele recomendar la Asociación Americana de Diabetes. Cámbialos si tu médico te dio otros.</p>
+      <div class="grid2">
+        <div class="field"><label for="setLow">Bajo si es menor de</label><input class="input" id="setLow" type="number" inputmode="decimal" step="any"></div>
+        <div class="field"><label for="setFast">Ayunas o antes de comer: máximo</label><input class="input" id="setFast" type="number" inputmode="decimal" step="any"></div>
+        <div class="field"><label for="setPost">Después de comer: máximo</label><input class="input" id="setPost" type="number" inputmode="decimal" step="any"></div>
+      </div>
+      <span class="hint muted small" id="goalUnit"></span>
+    </div>
+    <div class="card stack">
+      <h2 style="margin:0">Para tu médico</h2>
+      <p class="muted small" style="margin:0">Lleva tus números a la consulta. El reporte trae promedios, tiempo en meta, A1c estimada, gráfica y tus últimas mediciones.</p>
+      <button class="btn btn-primary" id="printReport">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a1 1 0 0 1-1 1h-2M6 14h12v7H6z"/></svg>
+        Imprimir o guardar PDF
+      </button>
+      <button class="btn btn-ghost" id="copySummary">Copiar resumen</button>
+      <button class="btn btn-ghost" id="downloadCsv">Descargar tabla (CSV)</button>
+      <p class="muted small" id="exportMsg" style="margin:0" aria-live="polite"></p>
+    </div>
+    <div class="card stack">
+      <h2 style="margin:0">Respaldo</h2>
+      <p class="muted small" style="margin:0" id="backupInfo">Tus mediciones se guardan solo en este dispositivo. Descarga un respaldo de vez en cuando, y úsalo para pasar tus datos a otro teléfono o computadora.</p>
+      <div class="grid2">
+        <button class="btn btn-ghost" id="backupBtn">Descargar respaldo</button>
+        <button class="btn btn-ghost" id="restoreBtn">Cargar respaldo</button>
+      </div>
+      <input type="file" id="restoreFile" accept="application/json,.json" hidden>
+      <p class="muted small" id="backupMsg" style="margin:0" aria-live="polite"></p>
+    </div>
+    <div class="card stack">
+      <h2 style="margin:0">Borrar datos</h2>
+      <p class="muted small" style="margin:0">Nadie más ve tus mediciones: no salen de este dispositivo.</p>
+      <div id="wipeBox">
+        <button class="btn btn-danger btn-sm" id="wipeBtn">Borrar todas mis mediciones</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="disclaimer">Esta app te ayuda a llevar tu registro. No reemplaza la indicación de tu médico.</p>
+</div>
+
+<nav class="bottom" aria-label="Secciones">
+  <div class="in">
+    <a href="#hoy" data-nav="hoy">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Hoy</a>
+    <a href="#historial" data-nav="historial">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/></svg>Historial</a>
+    <button class="add" data-open-entry aria-label="Registrar medición">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <a href="#aprende" data-nav="aprende">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6"/></svg>Aprende</a>
+    <a href="#aliados" data-nav="aliados">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9l1.5-5h15L21 9M3 9v11h18V9M3 9h18M9 20v-6h6v6"/></svg>Aliados</a>
+  </div>
+</nav>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <form class="sheet" id="entryForm" novalidate>
+    <div class="sheet-h">
+      <h2 id="sheetTitle">Nueva medición</h2>
+      <button type="button" class="icon-btn" id="closeSheet" aria-label="Cerrar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div>
+      <label for="entryValue" class="muted small" style="display:block;text-align:center;margin-bottom:8px;font-weight:700">¿Cuánto marcó tu glucómetro?</label>
+      <div class="big-entry">
+        <button type="button" class="step" data-step="-1" aria-label="Restar">−</button>
+        <input id="entryValue" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off">
+        <button type="button" class="step" data-step="1" aria-label="Sumar">+</button>
+      </div>
+      <div class="entry-unit" id="entryUnit">mg/dL</div>
+    </div>
+    <div class="live" id="entryLive" aria-live="polite"></div>
+    <div class="field">
+      <span class="lab" id="momLab">¿Cuándo te mediste?</span>
+      <div class="chips" id="momentChips" role="group" aria-labelledby="momLab"></div>
+    </div>
+    <div class="field">
+      <span class="lab" id="tagLab">¿Algo que quieras recordar? <span class="muted small" style="font-weight:400">(opcional)</span></span>
+      <div class="chips" id="tagChips" role="group" aria-labelledby="tagLab"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label for="entryTime">Fecha y hora</label><input class="input" id="entryTime" type="datetime-local"></div>
+      <div class="field"><label for="entryNote">Nota (opcional)</label><input class="input" id="entryNote" type="text" maxlength="120" placeholder="Ej. cené tarde, caminé"></div>
+    </div>
+    <p class="err" id="entryErr" hidden></p>
+    <button class="btn btn-primary" type="submit" id="entrySubmit">Guardar</button>
+    <button class="btn btn-danger btn-sm" type="button" id="entryDelete" hidden>Borrar esta medición</button>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status"><span id="toastTxt"></span><button id="toastUndo" hidden>Deshacer</button></div>
+
+<!-- Reporte imprimible (solo se ve al imprimir) -->
+<div id="report" aria-hidden="true"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
